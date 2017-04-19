@@ -1,3 +1,4 @@
+//dp[i][j] means max pizza the first person can get when slices[i:j] remained, assume everyone is smart
 //dp[i][j] = max(slices[i] + sum[i+1:j] - dp[i+1][j], slices[j] + sum[i:j-1] - dp[i][j-1])
 //         = max(sum[i:j] - dp[i+1][j], sum[i:j] - dp[i][j-1])
 
