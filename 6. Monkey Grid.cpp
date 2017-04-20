@@ -12,15 +12,7 @@ public:
 			q.pop();
 			string str = to_string(x) + " " + to_string(y);
 			if (visited.find(str) != visited.end()) continue;
-			int sum = 0, a = x, b = y;
-			while (a){
-				sum += a % 10;
-				a /= 10;
-			}
-			while (b){
-				sum += b % 10;
-				b /= 10;
-			}
+			int sum = digitSum(x) + digitSum(y);
 			if (sum <= k){
 				count++;
 				visited.insert(str);
@@ -29,8 +21,17 @@ public:
 				if (x > axisMax) axisMax = x;
 			}
 		}
-		return count;
-		//return (count - axisMax) * 4 - 3;
+		//return count;
+		return (count - axisMax) * 4 - 3;
+	}
+
+	int digitSum(int x){
+		int sum = 0;
+		while (x){
+			sum += x % 10;
+			x /= 10;
+		}
+		return sum;
 	}
 };
 
@@ -41,18 +42,9 @@ class Solution{
 public:
 	int monkeyGrid(int k){
 		int bound = 0;
-		while (1){
-			int sum = 0, a = bound;
-			while (a){
-				sum += a % 10;
-				a /= 10;
-			}
-			if (sum > k) break;
+		while (digitSum(bound) <= k)
 			bound++;
-		}
 		vector<vector<bool>> visited(bound, vector<bool>(bound, false));
-
-		int axisMax = 0;
 		queue<pair<int, int>> q;
 		q.push({ 0, 0 });
 		int count = 0;
@@ -60,23 +52,23 @@ public:
 			int x = q.front().first, y = q.front().second;
 			q.pop();
 			if (x >= bound || y >= bound || visited[x][y]) continue;
-			int sum = 0, a = x, b = y;
-			while (a){
-				sum += a % 10;
-				a /= 10;
-			}
-			while (b){
-				sum += b % 10;
-				b /= 10;
-			}
+			int sum = digitSum(x) + digitSum(y);
 			if (sum <= k){
 				count++;
 				visited[x][y] = true;
 				q.push({ x + 1, y });
 				q.push({ x, y + 1 });
-				if (x > axisMax) axisMax = x;
 			}
 		}
-		return count;
+		return (count - bound) * 4 + 1;
+	}
+
+	int digitSum(int x){
+		int sum = 0;
+		while (x){
+			sum += x % 10;
+			x /= 10;
+		}
+		return sum;
 	}
 };
