@@ -24,11 +24,20 @@ public:
 		for (auto i : a){
 			attrsDic[i->name] = i;
 		}
+		this->print();
 	}
 
 	void addAttr(Attribute* attr){
 		attrs.push_back(attr);
 		attrsDic[attr->name] = attr;
+		this->print();
+	}
+
+	void print(){
+		for (auto i : attrs){
+			cout << i->name << " = " << i->amount << " | ";
+		}
+		cout << endl;
 	}
 };
 
@@ -76,7 +85,7 @@ public:
 	Reward *myRew;
 	unordered_set<Player*> unlockedList;
 
-	Achievement(Requirement *a, Reward *b): myReq(a), myRew(b){}
+	Achievement(Requirement *a, Reward *b) : myReq(a), myRew(b){}
 
 	void checkPlayer(Player *player){
 		if (unlockedList.find(player) != unlockedList.end()) {
@@ -88,6 +97,7 @@ public:
 			myRew->assignReward(player);
 			cout << "Rewards assigned successfully!" << endl;
 			unlockedList.insert(player);
+			player->print();
 		}
 		else{
 			cout << "Requirements not satisfied!" << endl;
@@ -97,19 +107,34 @@ public:
 
 void main(){
 
-	Attribute *money = new Attribute("Money", 5);
-	Attribute *animal = new Attribute("Animal", 3);
+	Attribute *money = new Attribute("Money", 0);
+
 	Attribute *level = new Attribute("Level", 1);
-	
-	Player *player = new Player(vector<Attribute*> ({ money, animal, level }));
 
-	Requirement *reachLvl2Req = new Requirement(vector<pair<string, int>>({ { "Level", 2 } }));
-	Reward *reachLvl2Rew = new Reward(vector<pair<string, int>>({{ "Money", 3 }, { "Animal", 1 } }));
-	Achievement *reachLvl2 = new Achievement(reachLvl2Req, reachLvl2Rew);
-	reachLvl2->checkPlayer(player);
-	player->attrsDic["Level"]->changeAmount(1);
-	reachLvl2->checkPlayer(player);
-	player->attrsDic["Level"]->changeAmount(1);
-	reachLvl2->checkPlayer(player);
+	Player *player = new Player(vector<Attribute*>({ money, level }));
 
+	Requirement *achievement1Req = new Requirement(vector<pair<string, int>>({ { "Level", 2 } }));
+	Reward *achievement1Rew = new Reward(vector<pair<string, int>>({ { "Money", 10 } }));
+	Achievement *achievement1 = new Achievement(achievement1Req, achievement1Rew);
+
+	Attribute *animal = new Attribute("Animal", 1);
+	Attribute *HP = new Attribute("HP", 200);
+
+	Requirement *achievement2Req = new Requirement(vector<pair<string, int>>({ { "Level", 2 }, { "Money", 3 }, { "Animal", 5 }, { "HP", 100 } }));
+	Reward *achievement2Rew = new Reward(vector<pair<string, int>>({ { "Money", 10 }, { "Animal", 5 }, { "HP", 100 } }));
+	Achievement *achievement2 = new Achievement(achievement2Req, achievement2Rew);
+
+	achievement1->checkPlayer(player);
+	achievement2->checkPlayer(player);
+	player->attrsDic["Level"]->changeAmount(1);
+	player->print();
+	achievement1->checkPlayer(player);
+	player->addAttr(animal);
+	player->addAttr(HP);
+	achievement2->checkPlayer(player);
+	player->attrsDic["Animal"]->changeAmount(10);
+	player->print();
+	achievement2->checkPlayer(player);
+
+	system("pause");
 }
