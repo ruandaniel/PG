@@ -1,30 +1,16 @@
+class Requirement;
+class Reward;
+class Achievement;
+
 class Player{
 public:
 	int level;
 	int money;
 	int animal;
 	unordered_set<Achievement*> finished;
-	
+
 	Player(int l = 1, int m = 0, int a = 0) : level(l), money(m), animal(a){}
 
-	void satisfy(Achievement *achieve){
-		if (finished.find(achieve) != finished.end()){
-			cout << "Achievement already finished" << endl;
-			return;
-		}
-		for (auto i : achieve->reqs){
-			if (!i->isSatisfied(this)){
-				cout << "Requirement not satisfied" << endl;
-				return;
-			}
-		}
-		for (auto j : achieve->rews){
-			j->assign(this);
-		}
-		cout << "Rewards assigned" << endl;
-		finished.insert(achieve);
-	}
-	
 	void levelup(int x){
 		level += x;
 	}
@@ -36,13 +22,6 @@ public:
 	void animalup(int x){
 		animal += x;
 	}
-};
-
-class Achievement{
-public:
-	vector<Requirement*> reqs;
-	vector<Reward*> rews;
-	Achievement(vector<Requirement*> a, vector<Reward*> b) : reqs(a), rews(b){}
 };
 
 class Requirement{
@@ -109,12 +88,52 @@ public:
 	}
 };
 
+class Achievement{
+public:
+	vector<Requirement*> reqs;
+	vector<Reward*> rews;
+	Achievement(vector<Requirement*> a = {}, vector<Reward*> b = {}) : reqs(a), rews(b){}
+
+	void check(Player* player){
+		if (player->finished.find(this) != player->finished.end()){
+			cout << "Achievement already finished" << endl;
+			return;
+		}
+		for (auto i : this->reqs){
+			if (!i->isSatisfied(player)){
+				cout << "Requirement not satisfied" << endl;
+				return;
+			}
+		}
+		for (auto j : this->rews){
+			j->assign(player);
+		}
+		cout << "Achievement finished and rewards assigned" << endl;
+		player->finished.insert(this);
+
+	}
+};
+
 void main(){
 
 	LevelReq *lvl10 = new LevelReq(10);
-	MoneyReq *lvl20 = new MoneyReq(20);
+	MoneyReq *money20 = new MoneyReq(20);
+	MoneyRew *moneyRew20 = new MoneyRew(20);
+	vector<Requirement*> r1({ lvl10 });
+	vector<Reward*> w1({ moneyRew20 });
+	Achievement *reachLvl10 = new Achievement(r1, w1);
+	vector<Requirement*> r2({ lvl10, money20 });
+	Achievement *ac1 = new Achievement(r2, w1);
+	Player *player = new Player(1, 5, 0);
 
-	
+	reachLvl10->check(player);
+	ac1->check(player);
+
+	player->levelup(9);
+
+	reachLvl10->check(player);
+	ac1->check(player);
+
 
 	system("pause");
 }
