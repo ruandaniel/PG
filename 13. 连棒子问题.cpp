@@ -1,5 +1,4 @@
 //Greedy, always connect the shortest two
-//because the number of connection is n-1, thus everytime minimize the cost
 class Solution{
 public:
 	int robConnection(vector<int> robs){

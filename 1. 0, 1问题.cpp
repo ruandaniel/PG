@@ -23,7 +23,7 @@ public:
 	}
 };
 
-//O(N)
+//O(M+N)
 class Solution{
 public:
 	int leftMostOne(vector<string> matrix){
